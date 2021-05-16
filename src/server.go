@@ -3,28 +3,23 @@ package main
 import (
 	"fmt"
 	"github.com/gin-gonic/gin"
-	logger "github.com/sirupsen/logrus"
 	"github.com/wallet-tracky/Golang-backend/src/startup"
 	"github.com/wallet-tracky/Golang-backend/src/util"
 )
 
 func main() {
 
-	startup.InitializeLogger()
+	configSetup := startup.InitializeConfig()
+	config := configSetup.GetConfig()
 
-	logger.Info("Logger Initialized")
+	util.InitializeDatabase(config)
 
 	server := gin.Default()
+	startup.NewRouter().InitializeRouting(server)
 
-	util.InitializeDatabase()
-
-
-	router := startup.NewRouter()
-	router.InitializeRouting(server)
-
-	err := server.Run(":8080")
+	port := config.GetString("app.port")
+	err := server.Run(":" + port)
 	if err != nil {
-
 		fmt.Println(err)
 		return
 	}
