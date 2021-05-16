@@ -9,17 +9,17 @@ import (
 
 func main() {
 
+	configSetup := startup.InitializeConfig()
+	config := configSetup.GetConfig()
+
+	util.InitializeDatabase(config)
+
 	server := gin.Default()
+	startup.NewRouter().InitializeRouting(server)
 
-	util.InitializeDatabase()
-
-
-	router := startup.NewRouter()
-	router.InitializeRouting(server)
-
-	err := server.Run(":8080")
+	port := config.GetString("app.port")
+	err := server.Run(":" + port)
 	if err != nil {
-
 		fmt.Println(err)
 		return
 	}

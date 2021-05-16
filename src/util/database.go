@@ -2,6 +2,7 @@ package util
 
 import (
 	"fmt"
+	"github.com/spf13/viper"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 )
@@ -39,7 +40,7 @@ func getDbURL(dbConfig *dbProperties) string {
 	)
 }
 
-func  InitializeDatabase(){
+func  InitializeDatabase(config *viper.Viper){
 
 	fmt.Println("Initializing database")
 
