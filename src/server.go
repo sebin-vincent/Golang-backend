@@ -3,11 +3,16 @@ package main
 import (
 	"fmt"
 	"github.com/gin-gonic/gin"
+	logger "github.com/sirupsen/logrus"
 	"github.com/wallet-tracky/Golang-backend/src/startup"
 	"github.com/wallet-tracky/Golang-backend/src/util"
 )
 
 func main() {
+
+	startup.InitializeLogger()
+
+	logger.Info("Logger Initialized")
 
 	server := gin.Default()
 
