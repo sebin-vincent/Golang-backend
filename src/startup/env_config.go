@@ -36,7 +36,7 @@ func readConfig()  *viper.Viper{
 	}
 
 	fmt.Printf("App Environment :%s\n",env)
-
+	v.Set("env",env)
 	v.SetConfigName(env)
 	v.SetConfigType("yaml")
 	v.AddConfigPath("config")

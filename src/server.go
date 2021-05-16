@@ -1,8 +1,8 @@
 package main
 
 import (
-	"fmt"
 	"github.com/gin-gonic/gin"
+	logger "github.com/sirupsen/logrus"
 	"github.com/wallet-tracky/Golang-backend/src/startup"
 	"github.com/wallet-tracky/Golang-backend/src/util"
 )
@@ -12,6 +12,8 @@ func main() {
 	configSetup := startup.InitializeConfig()
 	config := configSetup.GetConfig()
 
+	startup.InitializeLogger(config)
+
 	util.InitializeDatabase(config)
 
 	server := gin.Default()
@@ -20,7 +22,6 @@ func main() {
 	port := config.GetString("app.port")
 	err := server.Run(":" + port)
 	if err != nil {
-		fmt.Println(err)
-		return
+		logger.Fatalf("Failed to run server. %s",err.Error())
 	}
 }
