@@ -20,6 +20,17 @@ services:
       # Where our data will be persisted
     volumes:
       - my-db:/var/lib/mysql
+  backend:
+    image: golang-backend
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    expose:
+      - 8080
+    ports:
+    - 8080:8080
+    depends_on:
+      - db
 # Names our volume
 volumes:
   my-db:
