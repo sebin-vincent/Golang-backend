@@ -2,17 +2,17 @@ package router
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/wallet-tracky/Golang-backend/src/controller"
-	"github.com/wallet-tracky/Golang-backend/src/middlewares/validator"
-	"github.com/wallet-tracky/Golang-backend/src/service"
+	controller2 "github.com/wallet-tracky/Golang-backend/controller"
+	validator2 "github.com/wallet-tracky/Golang-backend/middlewares/validator"
+	service2 "github.com/wallet-tracky/Golang-backend/service"
 )
 
 type ExpenseRouter struct {
-	controller *controller.ExpenseController
+	controller *controller2.ExpenseController
 }
 
 func (router *ExpenseRouter) InitializeExpenseRouting(server *gin.Engine) {
-	expenseValidator := validator.ExpenseValidator{}
+	expenseValidator := validator2.ExpenseValidator{}
 
 	server.POST("/expenses", expenseValidator.ValidateAddExpenseRequest, router.controller.AddExpense)
 
@@ -20,8 +20,8 @@ func (router *ExpenseRouter) InitializeExpenseRouting(server *gin.Engine) {
 }
 
 func NewExpenseRouter() *ExpenseRouter {
-	videoService := service.New()
-	videoController := controller.New(videoService)
+	videoService := service2.New()
+	videoController := controller2.New(videoService)
 
 	return &ExpenseRouter{
 		controller: videoController,

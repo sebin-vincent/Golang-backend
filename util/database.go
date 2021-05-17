@@ -54,11 +54,11 @@ func  InitializeDatabase(config *viper.Viper){
 	}
 
 
-	connectionURL:=getDbURL(dbConfig)
+	connectionURL:= getDbURL(dbConfig)
 
 	db, err := gorm.Open(mysql.Open(connectionURL), &gorm.Config{})
 
-	DB= db
+	DB = db
 
 	fmt.Println(DB)
 

@@ -3,16 +3,16 @@ package startup
 import (
 	"fmt"
 	"github.com/spf13/viper"
-	"github.com/wallet-tracky/Golang-backend/src/util"
+	util2 "github.com/wallet-tracky/Golang-backend/util"
 )
 
 type Config struct {
 	config *viper.Viper
 }
 
-func InitializeConfig() *Config{
+func InitializeConfig() *Config {
 	c:=new(Config)
-	c.config=readConfig()
+	c.config= readConfig()
 	return c
 }
 
@@ -39,10 +39,10 @@ func readConfig()  *viper.Viper{
 	v.Set("env",env)
 	v.SetConfigName(env)
 	v.SetConfigType("yaml")
-	v.AddConfigPath("src/config")
+	v.AddConfigPath("config")
 	err := v.ReadInConfig()
 
-	if util.IsError(err){
+	if util2.IsError(err){
 		fmt.Printf("Error while reading config :%s",err.Error())
 	}
 
