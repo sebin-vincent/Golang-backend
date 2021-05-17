@@ -1,7 +1,7 @@
 package service
 
 import (
-	"fmt"
+	logger "github.com/sirupsen/logrus"
 	"github.com/wallet-tracky/Golang-backend/src/dto/request"
 	"github.com/wallet-tracky/Golang-backend/src/dto/response"
 	"github.com/wallet-tracky/Golang-backend/src/model"
@@ -25,7 +25,6 @@ func (expenseService *expenseService) Save(expense *request.Expense) (*response.
 
 	var responseDTO *response.Expense
 
-	//DO rest of processing
 	newExpense := makeNewExpenseEntity(expense) //private method call to get new expense model from model.Expense
 
 	err := expenseService.expenseRepository.Save(newExpense)
@@ -36,7 +35,7 @@ func (expenseService *expenseService) Save(expense *request.Expense) (*response.
 
 func (expenseService *expenseService) FindAllExpenseOfUser(userId int) []response.Expense {
 
-	fmt.Println("Get user expenses")
+	logger.Info("Get user expenses")
 
 	expenses := expenseService.expenseRepository.FindByUserId(userId)
 

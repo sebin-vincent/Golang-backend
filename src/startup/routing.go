@@ -1,8 +1,8 @@
 package startup
 
 import (
-	"fmt"
 	"github.com/gin-gonic/gin"
+	logger "github.com/sirupsen/logrus"
 	"github.com/wallet-tracky/Golang-backend/src/router"
 )
 
@@ -11,11 +11,11 @@ type Router struct {
 }
 
 func (routing *Router) InitializeRouting(server *gin.Engine) {
-	fmt.Println("Initializing routing..")
+	logger.Info("Initializing routing..")
 
 	routing.expenseRouter.InitializeExpenseRouting(server)
 
-	fmt.Println("Routing initialized")
+	logger.Info("Routing initialized")
 }
 
 func NewRouter() *Router {

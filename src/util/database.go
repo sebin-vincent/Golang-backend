@@ -2,6 +2,7 @@ package util
 
 import (
 	"fmt"
+	logger "github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
@@ -18,9 +19,9 @@ type dbProperties struct {
 	Password string
 }
 
-func buildDBConfig() *dbProperties {
+func buildDBConfig(host string) *dbProperties {
 	dbConfig := dbProperties{
-		Host:     "localhost",
+		Host:     host,
 		Port:     3306,
 		User:     "user",
 		Password: "password",
@@ -42,9 +43,17 @@ func getDbURL(dbConfig *dbProperties) string {
 
 func  InitializeDatabase(config *viper.Viper){
 
-	fmt.Println("Initializing database")
+	logger.Info("logger.Info(Initializing database)")
 
-	dbConfig:= buildDBConfig()
+	env:=config.Get("env")
+
+	var dbConfig *dbProperties
+
+	if env=="dev"{
+		dbConfig= buildDBConfig("localhost")
+	}
+
+
 	connectionURL:=getDbURL(dbConfig)
 
 	db, err := gorm.Open(mysql.Open(connectionURL), &gorm.Config{})
@@ -54,8 +63,8 @@ func  InitializeDatabase(config *viper.Viper){
 	fmt.Println(DB)
 
 	if err != nil {
-		fmt.Println(err.Error())
+		logger.Error(err.Error())
 	}
 
-	fmt.Println("database initialized")
+	logger.Info("database initialized")
 }
