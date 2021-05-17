@@ -39,7 +39,7 @@ func readConfig()  *viper.Viper{
 	v.Set("env",env)
 	v.SetConfigName(env)
 	v.SetConfigType("yaml")
-	v.AddConfigPath("config")
+	v.AddConfigPath("src/config")
 	err := v.ReadInConfig()
 
 	if util.IsError(err){

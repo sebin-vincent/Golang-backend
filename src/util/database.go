@@ -43,7 +43,7 @@ func getDbURL(dbConfig *dbProperties) string {
 
 func  InitializeDatabase(config *viper.Viper){
 
-	logger.Info("logger.Info(Initializing database)")
+	logger.Info("Initializing database.")
 
 	env:=config.Get("env")
 
