@@ -3,9 +3,9 @@ package validator
 import (
 	"github.com/gin-gonic/gin"
 	logger "github.com/sirupsen/logrus"
-	dto2 "github.com/wallet-tracky/Golang-backend/dto"
-	request2 "github.com/wallet-tracky/Golang-backend/dto/request"
-	util2 "github.com/wallet-tracky/Golang-backend/util"
+	"github.com/wallet-tracky/Golang-backend/dto"
+	"github.com/wallet-tracky/Golang-backend/dto/request"
+	"github.com/wallet-tracky/Golang-backend/util"
 	"net/http"
 	"strconv"
 )
@@ -15,7 +15,7 @@ type ExpenseValidator struct {
 
 func (validator ExpenseValidator) ValidateAddExpenseRequest(context *gin.Context) {
 
-	var newExpense request2.Expense
+	var newExpense request.Expense
 	err := context.BindJSON(&newExpense)
 	if err != nil {
 		logger.Error(err.Error())
@@ -31,9 +31,9 @@ func (validator ExpenseValidator) ValidateGetExpensesOfUser(context *gin.Context
 
 	_, err := strconv.Atoi(context.GetHeader("userId"))
 
-	if util2.IsError(err) {
+	if util.IsError(err) {
 		logger.Error("Invalid userId")
-		context.AbortWithStatusJSON(http.StatusBadRequest, dto2.ErrorResponse{Message: "Invalid value for userId"})
+		context.AbortWithStatusJSON(http.StatusBadRequest, dto.ErrorResponse{Message: "Invalid value for userId"})
 	}
 
 	context.Next()

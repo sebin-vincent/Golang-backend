@@ -3,11 +3,11 @@ package startup
 import (
 	"github.com/gin-gonic/gin"
 	logger "github.com/sirupsen/logrus"
-	router2 "github.com/wallet-tracky/Golang-backend/router"
+	"github.com/wallet-tracky/Golang-backend/router"
 )
 
 type Router struct {
-	expenseRouter *router2.ExpenseRouter
+	expenseRouter *router.ExpenseRouter
 }
 
 func (routing *Router) InitializeRouting(server *gin.Engine) {
@@ -21,6 +21,6 @@ func (routing *Router) InitializeRouting(server *gin.Engine) {
 func NewRouter() *Router {
 
 	return &Router{
-		expenseRouter: router2.NewExpenseRouter(),
+		expenseRouter: router.NewExpenseRouter(),
 	}
 }

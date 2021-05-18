@@ -2,24 +2,21 @@ package repository
 
 import (
 	"fmt"
-	model2 "github.com/wallet-tracky/Golang-backend/model"
-	util2 "github.com/wallet-tracky/Golang-backend/util"
+	"github.com/wallet-tracky/Golang-backend/model"
+	"github.com/wallet-tracky/Golang-backend/util"
 	"gorm.io/gorm"
 )
 
 type ExpenseRepository interface {
-
-	Save(expense *model2.Expense) error
-	FindByUserId(userId int) *[]model2.Expense
-
+	Save(expense *model.Expense) error
+	FindByUserId(userId int) *[]model.Expense
 }
-
 
 type expenseRepository struct {
 	database *gorm.DB
 }
 
-func (repository *expenseRepository) Save(expense *model2.Expense) error{
+func (repository *expenseRepository) Save(expense *model.Expense) error {
 
 	createdExpense := repository.database.Create(expense)
 	err := createdExpense.Error
@@ -27,23 +24,20 @@ func (repository *expenseRepository) Save(expense *model2.Expense) error{
 	return err
 }
 
+func (repository *expenseRepository) FindByUserId(userId int) *[]model.Expense {
 
-func (repository *expenseRepository) FindByUserId(userId int) *[]model2.Expense {
+	var expenses []model.Expense
 
-	var expenses []model2.Expense
+	transaction := util.DB.Find(&expenses, map[string]interface{}{"userId": userId})
 
-
-	transaction := util2.DB.Find(&expenses, map[string]interface{}{"userId": userId})
-
-	if util2.IsError(transaction.Error){
+	if util.IsError(transaction.Error) {
 		fmt.Println(transaction.Error.Error())
 	}
 
 	return &expenses
 }
 
-
 func NewExpenseRepository() ExpenseRepository {
 
-	return &expenseRepository{database: util2.DB}
+	return &expenseRepository{database: util.DB}
 }

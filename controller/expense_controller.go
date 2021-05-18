@@ -4,19 +4,19 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	logger "github.com/sirupsen/logrus"
-	dto2 "github.com/wallet-tracky/Golang-backend/dto"
-	request2 "github.com/wallet-tracky/Golang-backend/dto/request"
-	service2 "github.com/wallet-tracky/Golang-backend/service"
-	util2 "github.com/wallet-tracky/Golang-backend/util"
+	"github.com/wallet-tracky/Golang-backend/dto"
+	"github.com/wallet-tracky/Golang-backend/dto/request"
+	"github.com/wallet-tracky/Golang-backend/service"
+	"github.com/wallet-tracky/Golang-backend/util"
 	"net/http"
 	"strconv"
 )
 
 type ExpenseController struct {
-	expenseService service2.ExpenseService
+	expenseService service.ExpenseService
 }
 
-func New(expenseService service2.ExpenseService) *ExpenseController {
+func New(expenseService service.ExpenseService) *ExpenseController {
 	return &ExpenseController{expenseService: expenseService}
 }
 
@@ -24,13 +24,13 @@ func (controller *ExpenseController) AddExpense(ctx *gin.Context) {
 
 	requestBody, _ := ctx.Get("expense")
 
-	newExpense := requestBody.(*request2.Expense)
+	newExpense := requestBody.(*request.Expense)
 
 	responseDTO, err := controller.expenseService.Save(newExpense)
 
-	if util2.IsError(err) {
+	if util.IsError(err) {
 		fmt.Println(err)
-		ctx.AbortWithStatusJSON(http.StatusInternalServerError, dto2.ErrorResponse{Message: "Something went wrong!"})
+		ctx.AbortWithStatusJSON(http.StatusInternalServerError, dto.ErrorResponse{Message: "Something went wrong!"})
 		return
 	}
 

@@ -2,28 +2,28 @@ package service
 
 import (
 	logger "github.com/sirupsen/logrus"
-	request2 "github.com/wallet-tracky/Golang-backend/dto/request"
-	response2 "github.com/wallet-tracky/Golang-backend/dto/response"
-	model2 "github.com/wallet-tracky/Golang-backend/model"
-	repository2 "github.com/wallet-tracky/Golang-backend/repository"
+	"github.com/wallet-tracky/Golang-backend/dto/request"
+	"github.com/wallet-tracky/Golang-backend/dto/response"
+	"github.com/wallet-tracky/Golang-backend/model"
+	"github.com/wallet-tracky/Golang-backend/repository"
 )
 
 type ExpenseService interface {
-	Save(expense *request2.Expense) (*response2.Expense, error)
-	FindAllExpenseOfUser(userId int) []response2.Expense
+	Save(expense *request.Expense) (*response.Expense, error)
+	FindAllExpenseOfUser(userId int) []response.Expense
 }
 
 type expenseService struct {
-	expenseRepository repository2.ExpenseRepository
+	expenseRepository repository.ExpenseRepository
 }
 
 func New() ExpenseService {
-	return &expenseService{expenseRepository: repository2.NewExpenseRepository()}
+	return &expenseService{expenseRepository: repository.NewExpenseRepository()}
 }
 
-func (expenseService *expenseService) Save(expense *request2.Expense) (*response2.Expense, error) {
+func (expenseService *expenseService) Save(expense *request.Expense) (*response.Expense, error) {
 
-	var responseDTO *response2.Expense
+	var responseDTO *response.Expense
 
 	newExpense := makeNewExpenseEntity(expense) //private method call to get new expense model from model.Expense
 
@@ -33,15 +33,15 @@ func (expenseService *expenseService) Save(expense *request2.Expense) (*response
 	return responseDTO, err
 }
 
-func (expenseService *expenseService) FindAllExpenseOfUser(userId int) []response2.Expense {
+func (expenseService *expenseService) FindAllExpenseOfUser(userId int) []response.Expense {
 
 	logger.Info("Get user expenses")
 
 	expenses := expenseService.expenseRepository.FindByUserId(userId)
 
-	userExpenses := make([]response2.Expense, len(*expenses))
+	userExpenses := make([]response.Expense, len(*expenses))
 
-	var expenseDTO *response2.Expense
+	var expenseDTO *response.Expense
 	for index, expense := range *expenses {
 		expenseDTO = makeNewExpenseResponseDTO(&expense)
 		userExpenses[index] = *expenseDTO
@@ -51,9 +51,9 @@ func (expenseService *expenseService) FindAllExpenseOfUser(userId int) []respons
 }
 
 
-func makeNewExpenseEntity(expense *request2.Expense) *model2.Expense {
+func makeNewExpenseEntity(expense *request.Expense) *model.Expense {
 
-	newExpense := &model2.Expense{}
+	newExpense := &model.Expense{}
 	newExpense.UserId=1
 	newExpense.Description = expense.Description
 	newExpense.Amount = expense.Amount
@@ -70,9 +70,9 @@ func makeNewExpenseEntity(expense *request2.Expense) *model2.Expense {
 	return newExpense
 }
 
-func makeNewExpenseResponseDTO(expense *model2.Expense) *response2.Expense {
+func makeNewExpenseResponseDTO(expense *model.Expense) *response.Expense {
 
-	expenseResponse := new(response2.Expense)
+	expenseResponse := new(response.Expense)
 
 	expenseResponse.Id = expense.Id
 	expenseResponse.Description = expense.Description

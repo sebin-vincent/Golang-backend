@@ -3,7 +3,7 @@ package startup
 import (
 	"fmt"
 	"github.com/spf13/viper"
-	util2 "github.com/wallet-tracky/Golang-backend/util"
+	"github.com/wallet-tracky/Golang-backend/util"
 )
 
 type Config struct {
@@ -11,39 +11,38 @@ type Config struct {
 }
 
 func InitializeConfig() *Config {
-	c:=new(Config)
-	c.config= readConfig()
+	c := new(Config)
+	c.config = readConfig()
 	return c
 }
 
-func (c *Config) GetConfig() *viper.Viper{
-	if c.config!=nil{
+func (c *Config) GetConfig() *viper.Viper {
+	if c.config != nil {
 		return c.config
 	}
 	return nil
 }
 
+func readConfig() *viper.Viper {
 
-func readConfig()  *viper.Viper{
-
-	v:=viper.New()
+	v := viper.New()
 	v.AutomaticEnv()
 
-	env:=v.GetString("ENVIRONMENT")
+	env := v.GetString("ENVIRONMENT")
 
-	if env==""{
-		env="dev"
+	if env == "" {
+		env = "dev"
 	}
 
-	fmt.Printf("App Environment :%s\n",env)
-	v.Set("env",env)
+	fmt.Printf("App Environment :%s\n", env)
+	v.Set("env", env)
 	v.SetConfigName(env)
 	v.SetConfigType("yaml")
 	v.AddConfigPath("config")
 	err := v.ReadInConfig()
 
-	if util2.IsError(err){
-		fmt.Printf("Error while reading config :%s",err.Error())
+	if util.IsError(err) {
+		fmt.Printf("Error while reading config :%s", err.Error())
 	}
 
 	return v
