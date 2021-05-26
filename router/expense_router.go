@@ -4,6 +4,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/wallet-tracky/Golang-backend/controller"
 	"github.com/wallet-tracky/Golang-backend/middlewares/validator"
+	"github.com/wallet-tracky/Golang-backend/repository"
 	"github.com/wallet-tracky/Golang-backend/service"
 )
 
@@ -20,10 +21,11 @@ func (router *ExpenseRouter) InitializeExpenseRouting(server *gin.Engine) {
 }
 
 func NewExpenseRouter() *ExpenseRouter {
-	videoService := service.New()
-	videoController := controller.New(videoService)
+	expenseRepository := repository.NewExpenseRepository()
+	expenseService := service.NewExpenseService(expenseRepository)
+	expenseController := controller.New(expenseService)
 
 	return &ExpenseRouter{
-		controller: videoController,
+		controller: expenseController,
 	}
 }
