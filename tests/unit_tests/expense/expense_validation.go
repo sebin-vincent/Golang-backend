@@ -85,3 +85,66 @@ var _ = Describe("Add expense validation", func() {
 		})
 	})
 })
+
+var _=Describe("Get expense Validator", func() {
+	gin.SetMode(gin.TestMode)
+	Context("Positive scenario", func() {
+		It("Should not return error on valid inputs", func() {
+
+
+			recorder := httptest.NewRecorder()
+			context, _ := gin.CreateTestContext(recorder)
+
+
+
+			context.Request=&http.Request{}
+
+			context.Request.Header=make(map[string][]string)
+
+			context.Request.Header.Add("userId","1")
+
+			validator.ExpenseValidator{}.ValidateGetExpensesOfUser(context)
+
+			gomega.Expect(recorder.Code).To(gomega.Equal(200))
+
+		})
+	})
+
+	Context("Negative Scenarios", func() {
+		It("Should return 400(Bad request) when userId is not present", func() {
+
+			recorder := httptest.NewRecorder()
+			context, _ := gin.CreateTestContext(recorder)
+
+
+			context.Request=&http.Request{}
+
+			context.Request.Header=make(map[string][]string)
+
+			//context.Request.Header.Add("userId","a") should not header userId to header
+
+			validator.ExpenseValidator{}.ValidateGetExpensesOfUser(context)
+
+			gomega.Expect(recorder.Code).To(gomega.Equal(400))
+
+		})
+
+		It("Should return 400(Bad request) when userId value type is not compatible", func() {
+
+			recorder := httptest.NewRecorder()
+			context, _ := gin.CreateTestContext(recorder)
+
+
+			context.Request=&http.Request{}
+
+			context.Request.Header=make(map[string][]string)
+
+			context.Request.Header.Add("userId","a")
+
+			validator.ExpenseValidator{}.ValidateGetExpensesOfUser(context)
+
+			gomega.Expect(recorder.Code).To(gomega.Equal(400))
+
+		})
+	})
+})

@@ -1,7 +1,6 @@
 package validator
 
 import (
-	"fmt"
 	"github.com/gin-gonic/gin"
 	logger "github.com/sirupsen/logrus"
 	"github.com/wallet-tracky/Golang-backend/dto"
@@ -22,7 +21,6 @@ func (validator ExpenseValidator) ValidateAddExpenseRequest(context *gin.Context
 		context.AbortWithStatusJSON(http.StatusBadRequest, err.Error())
 		return
 	}
-	fmt.Println(newExpense)
 
 	context.Set("expense", &newExpense)
 	context.Next()
