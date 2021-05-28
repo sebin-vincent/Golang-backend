@@ -25,7 +25,7 @@ func (expenseService *expenseService) Save(expense *request.Expense) (*response.
 
 	var responseDTO *response.Expense
 
-	newExpense := makeNewExpenseEntity(expense) //private method call to get new expense model from model.Expense
+	newExpense := makeNewExpenseModel(expense) //private method call to get new expense model from model.Expense
 
 	err := expenseService.expenseRepository.Save(newExpense)
 
@@ -51,7 +51,7 @@ func (expenseService *expenseService) FindAllExpenseOfUser(userId int) []respons
 }
 
 
-func makeNewExpenseEntity(expense *request.Expense) *model.Expense {
+func makeNewExpenseModel(expense *request.Expense) *model.Expense {
 
 	newExpense := &model.Expense{}
 	newExpense.UserId=1
