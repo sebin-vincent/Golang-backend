@@ -1,8 +1,8 @@
 package service
 
 import (
-	"errors"
 	logger "github.com/sirupsen/logrus"
+	. "github.com/wallet-tracky/Golang-backend/dto"
 	"github.com/wallet-tracky/Golang-backend/dto/request"
 	"github.com/wallet-tracky/Golang-backend/dto/response"
 	"github.com/wallet-tracky/Golang-backend/model"
@@ -12,71 +12,78 @@ import (
 )
 
 type UserService interface {
-	UserSignup(userSignupRequest *request.UserSignUp) (string,error)
-	Login(loginRequest request.LoginRequest) (*response.LoginResponse,error)
+	UserSignup(userSignupRequest *request.UserSignUp) (string, *ErrorResponse)
+	Login(loginRequest request.LoginRequest) (*response.LoginResponse, *ErrorResponse)
 }
 
 type userService struct {
 	repo repository.UserRepository
 }
 
-func (service *userService) Login(loginRequest request.LoginRequest) (*response.LoginResponse,error) {
+func (service *userService) Login(loginRequest request.LoginRequest) (*response.LoginResponse, *ErrorResponse) {
 
 	loginResponse := &response.LoginResponse{}
 
 	user, err := service.repo.FindByEmail(loginRequest.Email)
 
-	if err!=nil{
-		return nil,err
+	if err != nil {
+		logger.Info("User does not exists with given mail")
+		return nil, &ErrorResponse{Status: 404,Message: "User does not exists"}
 	}
 
-	isPasswordMatching:=user.ComparePassword(loginRequest.Password)
+	isPasswordMatching := user.ComparePassword(loginRequest.Password)
 
-	if !isPasswordMatching{
-		return nil,errors.New("invalid email/password")
+	if !isPasswordMatching {
+		return nil,&ErrorResponse{Status: 401,Message: "Email/Password does not match"}
 	}
 
 	accessToken, err := util.GenerateToken(user.Id, "AccessToken")
-	if err!=nil{
+	if err != nil {
 		logger.Error("Access Token generation failed")
-		return nil,err
+		return nil, &ErrorResponse{Status: 500,Message: "Something went wrong"}
 	}
 
 	refreshToken, err := util.GenerateToken(user.Id, "AccessToken")
-	if err!=nil{
+	if err != nil {
 		logger.Error("Refresh Token generation failed")
-		return nil,err
+		return nil, &ErrorResponse{Status: 500,Message: "Something went wrong"}
 	}
 
-	loginResponse.AccessToken=accessToken
-	loginResponse.RefreshToken=refreshToken
+	loginResponse.AccessToken = accessToken
+	loginResponse.RefreshToken = refreshToken
 
-
-	return loginResponse,nil
+	return loginResponse, nil
 }
 
-func (service *userService) UserSignup(userSignUpRequest *request.UserSignUp) (string,error){
+func (service *userService) UserSignup(userSignUpRequest *request.UserSignUp) (string, *ErrorResponse) {
+
+	user, err := service.repo.FindByEmail(userSignUpRequest.Email)
+
+	if user != nil {
+		logger.Error("User with email already exists", err)
+		return "", &ErrorResponse{Status: 400, Message: "User with given email already exists"}
+	}
 
 	userModel := makeUserModelFromDTO(userSignUpRequest)
 
-	encryptedPassword,err:=util.EncryptPassword(userModel.Password)
+	encryptedPassword, err := util.EncryptPassword(userModel.Password)
 
-	if err!=nil{
+	if err != nil {
 		logger.Error("Error while hashing password")
 		logger.Error(err.Error())
-		return "",errors.New("something went wrong")
+		return "", &ErrorResponse{Status: 500, Message: "Something went wrong"}
 	}
 
-	userModel.Password=encryptedPassword
+	userModel.Password = encryptedPassword
 
 	err = service.repo.Save(userModel)
 
-	if err!=nil {
+	if err != nil {
 		logger.Error(err.Error())
-		return "SomeThing wrong",err
+		return "", &ErrorResponse{Status: 500, Message: "Something went wrong"}
 	}
 
-	return "User saved",nil
+	return "User saved", nil
 }
 
 func makeUserModelFromDTO(signUpRequest *request.UserSignUp) *model.User {

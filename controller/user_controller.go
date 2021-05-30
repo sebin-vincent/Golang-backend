@@ -21,7 +21,7 @@ func (controller *UserController) UserSignUp(context *gin.Context){
 	resp, err := controller.userService.UserSignup(userRequestBody)
 
 	if err!=nil{
-		context.AbortWithStatusJSON(500,err.Error())
+		context.AbortWithStatusJSON(err.Status,err)
 		return
 	}
 
@@ -36,7 +36,7 @@ func (controller *UserController) Login(context *gin.Context){
 	responseBody, err := controller.userService.Login(*loginRequest)
 
 	if err!=nil{
-		context.AbortWithStatusJSON(401,"UnAuthorised")
+		context.AbortWithStatusJSON(err.Status,err.Message)
 		return
 	}
 

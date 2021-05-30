@@ -1,15 +1,11 @@
 package controller
 
 import (
-	"fmt"
 	"github.com/gin-gonic/gin"
 	logger "github.com/sirupsen/logrus"
-	"github.com/wallet-tracky/Golang-backend/dto"
 	"github.com/wallet-tracky/Golang-backend/dto/request"
 	"github.com/wallet-tracky/Golang-backend/service"
-	"github.com/wallet-tracky/Golang-backend/util"
 	"net/http"
-	"strconv"
 )
 
 type ExpenseController struct {
@@ -26,15 +22,14 @@ func (controller *ExpenseController) AddExpense(ctx *gin.Context) {
 
 	userId:=idObject.(int)
 
-	requestBody, _ := ctx.Get("expense")
+	requestBody, _ := ctx.Get("request")
 
 	newExpense := requestBody.(*request.Expense)
 
 	responseDTO, err := controller.expenseService.Save(newExpense,userId)
 
-	if util.IsError(err) {
-		fmt.Println(err)
-		ctx.AbortWithStatusJSON(http.StatusInternalServerError, dto.ErrorResponse{Message: "Something went wrong!"})
+	if err!=nil {
+		ctx.AbortWithStatusJSON(http.StatusInternalServerError,err)
 		return
 	}
 
@@ -42,7 +37,8 @@ func (controller *ExpenseController) AddExpense(ctx *gin.Context) {
 }
 
 func (controller *ExpenseController) GetExpenses(ctx *gin.Context) {
-	userId, _ := strconv.Atoi(ctx.GetHeader("userId"))
+	id, _ := ctx.Get("userId")
+	userId:=id.(int)
 
 	logger.Infof("Request to get expenses for user: %d", userId)
 	userExpenses := controller.expenseService.FindAllExpenseOfUser(userId)

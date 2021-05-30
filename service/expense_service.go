@@ -2,6 +2,7 @@ package service
 
 import (
 	logger "github.com/sirupsen/logrus"
+	. "github.com/wallet-tracky/Golang-backend/dto"
 	"github.com/wallet-tracky/Golang-backend/dto/request"
 	"github.com/wallet-tracky/Golang-backend/dto/response"
 	"github.com/wallet-tracky/Golang-backend/model"
@@ -9,7 +10,7 @@ import (
 )
 
 type ExpenseService interface {
-	Save(expense *request.Expense,userId int) (*response.Expense, error)
+	Save(expense *request.Expense,userId int) (*response.Expense, *ErrorResponse)
 	FindAllExpenseOfUser(userId int) []response.Expense
 }
 
@@ -21,7 +22,7 @@ func NewExpenseService(expenseRepository repository.ExpenseRepository) ExpenseSe
 	return &expenseService{expenseRepository: expenseRepository}
 }
 
-func (expenseService *expenseService) Save(expense *request.Expense,userId int) (*response.Expense, error) {
+func (expenseService *expenseService) Save(expense *request.Expense,userId int) (*response.Expense, *ErrorResponse) {
 
 	var responseDTO *response.Expense
 
@@ -29,8 +30,13 @@ func (expenseService *expenseService) Save(expense *request.Expense,userId int) 
 
 	err := expenseService.expenseRepository.Save(newExpense)
 
+	if err!=nil{
+		logger.Error("Error while saving expense data. ",err)
+		return nil,&ErrorResponse{Status: 500,Message: "Something went wrong!"}
+	}
+
 	responseDTO = makeNewExpenseResponseDTO(newExpense) //private method call to get responseDTO from model.Expense
-	return responseDTO, err
+	return responseDTO, nil
 }
 
 func (expenseService *expenseService) FindAllExpenseOfUser(userId int) []response.Expense {

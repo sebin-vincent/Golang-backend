@@ -18,7 +18,7 @@ func (router *ExpenseRouter) InitializeExpenseRouting(server *gin.Engine) {
 
 	server.POST("/expenses", Authenticate(""),expenseValidator.ValidateAddExpenseRequest, router.controller.AddExpense)
 
-	server.GET("/expenses", expenseValidator.ValidateGetExpensesOfUser, router.controller.GetExpenses)
+	server.GET("/expenses",Authenticate(""), expenseValidator.ValidateGetExpensesOfUser, router.controller.GetExpenses)
 }
 
 func NewExpenseRouter() *ExpenseRouter {

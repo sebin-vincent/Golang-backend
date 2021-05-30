@@ -3,11 +3,10 @@ package validator
 import (
 	"github.com/gin-gonic/gin"
 	logger "github.com/sirupsen/logrus"
-	"github.com/wallet-tracky/Golang-backend/dto"
+	. "github.com/wallet-tracky/Golang-backend/dto"
 	"github.com/wallet-tracky/Golang-backend/dto/request"
 	"github.com/wallet-tracky/Golang-backend/util"
 	"net/http"
-	"strconv"
 	"time"
 )
 
@@ -19,7 +18,8 @@ func (validator ExpenseValidator) ValidateAddExpenseRequest(context *gin.Context
 	var newExpense request.Expense
 	err := context.BindJSON(&newExpense)
 	if err != nil {
-		context.AbortWithStatusJSON(http.StatusBadRequest, err.Error())
+		logger.Error("Bad request",err.Error())
+		context.AbortWithStatusJSON(http.StatusBadRequest, ErrorResponse{Status: 400,Message: err.Error()})
 		return
 	}
 
@@ -28,7 +28,7 @@ func (validator ExpenseValidator) ValidateAddExpenseRequest(context *gin.Context
 	if err!=nil{
 		logger.Info("Error while parsing date. Given date: ",newExpense.Date)
 		logger.Error(err.Error())
-		context.AbortWithStatusJSON(http.StatusBadRequest, "Invalid date format. Please add date as "+util.TIME_LAYOUT)
+		context.AbortWithStatusJSON(http.StatusBadRequest, ErrorResponse{Status: 400,Message: "Invalid date format. Please add date as "+util.TIME_LAYOUT})
 		return
 	}
 
@@ -40,19 +40,11 @@ func (validator ExpenseValidator) ValidateAddExpenseRequest(context *gin.Context
 
 	newExpense.Date=date.Format(util.TIME_LAYOUT)
 
-	context.Set("expense", &newExpense)
+	context.Set("request", &newExpense)
 	context.Next()
 }
 
 func (validator ExpenseValidator) ValidateGetExpensesOfUser(context *gin.Context) {
-
-	_, err := strconv.Atoi(context.GetHeader("userId"))
-
-	if util.IsError(err) {
-		logger.Error("Invalid userId")
-		context.AbortWithStatusJSON(http.StatusBadRequest, dto.ErrorResponse{Message: "Invalid value for userId"})
-		return
-	}
 
 	context.Next()
 }
