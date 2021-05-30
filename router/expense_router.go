@@ -3,6 +3,7 @@ package router
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/wallet-tracky/Golang-backend/controller"
+	. "github.com/wallet-tracky/Golang-backend/middlewares"
 	"github.com/wallet-tracky/Golang-backend/middlewares/validator"
 	"github.com/wallet-tracky/Golang-backend/repository"
 	"github.com/wallet-tracky/Golang-backend/service"
@@ -15,7 +16,7 @@ type ExpenseRouter struct {
 func (router *ExpenseRouter) InitializeExpenseRouting(server *gin.Engine) {
 	expenseValidator := validator.ExpenseValidator{}
 
-	server.POST("/expenses", expenseValidator.ValidateAddExpenseRequest, router.controller.AddExpense)
+	server.POST("/expenses", Authenticate(""),expenseValidator.ValidateAddExpenseRequest, router.controller.AddExpense)
 
 	server.GET("/expenses", expenseValidator.ValidateGetExpensesOfUser, router.controller.GetExpenses)
 }
@@ -23,7 +24,7 @@ func (router *ExpenseRouter) InitializeExpenseRouting(server *gin.Engine) {
 func NewExpenseRouter() *ExpenseRouter {
 	expenseRepository := repository.NewExpenseRepository()
 	expenseService := service.NewExpenseService(expenseRepository)
-	expenseController := controller.New(expenseService)
+	expenseController := controller.NewExpenseController(expenseService)
 
 	return &ExpenseRouter{
 		controller: expenseController,

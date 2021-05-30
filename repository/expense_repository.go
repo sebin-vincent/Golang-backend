@@ -7,6 +7,7 @@ import (
 	"gorm.io/gorm"
 )
 
+
 type ExpenseRepository interface {
 	Save(expense *model.Expense) error
 	FindByUserId(userId int) *[]model.Expense

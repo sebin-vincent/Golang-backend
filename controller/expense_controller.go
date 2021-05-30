@@ -16,17 +16,21 @@ type ExpenseController struct {
 	expenseService service.ExpenseService
 }
 
-func New(expenseService service.ExpenseService) *ExpenseController {
+func NewExpenseController(expenseService service.ExpenseService) *ExpenseController {
 	return &ExpenseController{expenseService: expenseService}
 }
 
 func (controller *ExpenseController) AddExpense(ctx *gin.Context) {
 
+	idObject, _ := ctx.Get("userId")
+
+	userId:=idObject.(int)
+
 	requestBody, _ := ctx.Get("expense")
 
 	newExpense := requestBody.(*request.Expense)
 
-	responseDTO, err := controller.expenseService.Save(newExpense)
+	responseDTO, err := controller.expenseService.Save(newExpense,userId)
 
 	if util.IsError(err) {
 		fmt.Println(err)

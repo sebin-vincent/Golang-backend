@@ -15,7 +15,6 @@ func main() {
 	startup.InitializeLogger(config)
 
 	util.InitializeDatabase(config)
-
 	server := gin.Default()
 	startup.NewRouter().InitializeRouting(server)
 

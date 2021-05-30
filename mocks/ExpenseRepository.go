@@ -2,7 +2,7 @@
 // Source: github.com/wallet-tracky/Golang-backend/repository (interfaces: ExpenseRepository)
 
 // Package mock_repository is a generated GoMock package.
-package mock_repository
+package mocks
 
 import (
 	gomock "github.com/golang/mock/gomock"

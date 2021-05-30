@@ -9,7 +9,7 @@ import (
 )
 
 type ExpenseService interface {
-	Save(expense *request.Expense) (*response.Expense, error)
+	Save(expense *request.Expense,userId int) (*response.Expense, error)
 	FindAllExpenseOfUser(userId int) []response.Expense
 }
 
@@ -21,11 +21,11 @@ func NewExpenseService(expenseRepository repository.ExpenseRepository) ExpenseSe
 	return &expenseService{expenseRepository: expenseRepository}
 }
 
-func (expenseService *expenseService) Save(expense *request.Expense) (*response.Expense, error) {
+func (expenseService *expenseService) Save(expense *request.Expense,userId int) (*response.Expense, error) {
 
 	var responseDTO *response.Expense
 
-	newExpense := makeNewExpenseModel(expense) //private method call to get new expense model from model.Expense
+	newExpense := makeNewExpenseModel(expense,userId) //private method call to get new expense model from model.Expense
 
 	err := expenseService.expenseRepository.Save(newExpense)
 
@@ -51,10 +51,10 @@ func (expenseService *expenseService) FindAllExpenseOfUser(userId int) []respons
 }
 
 
-func makeNewExpenseModel(expense *request.Expense) *model.Expense {
+func makeNewExpenseModel(expense *request.Expense,userId int) *model.Expense {
 
 	newExpense := &model.Expense{}
-	newExpense.UserId=1
+	newExpense.UserId=userId
 	newExpense.Description = expense.Description
 	newExpense.Amount = expense.Amount
 	newExpense.SpendFrom = expense.SpendFrom

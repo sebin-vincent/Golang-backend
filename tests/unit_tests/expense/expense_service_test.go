@@ -4,7 +4,7 @@ import (
 	"github.com/golang/mock/gomock"
 	. "github.com/onsi/ginkgo"
 	"github.com/onsi/gomega"
-	mockRepository "github.com/wallet-tracky/Golang-backend/mock"
+	"github.com/wallet-tracky/Golang-backend/mocks"
 	"github.com/wallet-tracky/Golang-backend/model"
 	"github.com/wallet-tracky/Golang-backend/service"
 )
@@ -18,7 +18,7 @@ var _ = Describe("Service:- Get expense Service", func() {
 	Context("Positive scenario", func() {
 		It("Should not return error if valid inputs are given", func() {
 
-			mockRepository := mockRepository.NewMockExpenseRepository(mockController)
+			mockRepository := mocks.NewMockExpenseRepository(mockController)
 
 			expenseModel := make([]model.Expense, 2)
 			mockRepository.EXPECT().FindByUserId(1).Return(&expenseModel)
