@@ -88,7 +88,7 @@ func (service *userService) UserSignup(userSignUpRequest *request.UserSignUp) (s
 
 func makeUserModelFromDTO(signUpRequest *request.UserSignUp) *model.User {
 
-	now := time.Now().Format(util.TIME_LAYOUT)
+	now := time.Now().Format(util.DateTimeLayout)
 
 	userModel := &model.User{
 		Email:     signUpRequest.Email,

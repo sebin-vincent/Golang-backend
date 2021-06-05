@@ -27,7 +27,7 @@ func (repo *userRepository) FindByEmail(email string) (*model.User, error) {
 
 	var user model.User
 
-	err := repo.database.Take(&user, map[string]interface{}{"email": email}).Error
+	err := repo.database.First(&user, map[string]interface{}{"email": email}).Error
 
 	if errors.Is(err,gorm.ErrRecordNotFound){
 		return nil, err

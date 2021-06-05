@@ -7,11 +7,17 @@ import (
 	"github.com/wallet-tracky/Golang-backend/dto/response"
 	"github.com/wallet-tracky/Golang-backend/model"
 	"github.com/wallet-tracky/Golang-backend/repository"
+	"time"
 )
 
 type ExpenseService interface {
-	Save(expense *request.Expense,userId int) (*response.Expense, *ErrorResponse)
-	FindAllExpenseOfUser(userId int) []response.Expense
+	Save(expense *request.Expense, userId int) (*response.Expense, *ErrorResponse)
+	FindAllExpenseOfUser(userId int,
+		from time.Time,
+		to time.Time,
+		categories []string,
+		pageable Pageable,
+	) []response.Expense
 }
 
 type expenseService struct {
@@ -22,28 +28,43 @@ func NewExpenseService(expenseRepository repository.ExpenseRepository) ExpenseSe
 	return &expenseService{expenseRepository: expenseRepository}
 }
 
-func (expenseService *expenseService) Save(expense *request.Expense,userId int) (*response.Expense, *ErrorResponse) {
+func (expenseService *expenseService) Save(expense *request.Expense, userId int) (*response.Expense, *ErrorResponse) {
 
 	var responseDTO *response.Expense
 
-	newExpense := makeNewExpenseModel(expense,userId) //private method call to get new expense model from model.Expense
+	newExpense := makeNewExpenseModel(expense, userId) //private method call to get new expense model from model.Expense
 
 	err := expenseService.expenseRepository.Save(newExpense)
 
-	if err!=nil{
-		logger.Error("Error while saving expense data. ",err)
-		return nil,&ErrorResponse{Status: 500,Message: "Something went wrong!"}
+	if err != nil {
+		logger.Error("Error while saving expense data. ", err)
+		return nil, &ErrorResponse{Status: 500, Message: "Something went wrong!"}
 	}
 
 	responseDTO = makeNewExpenseResponseDTO(newExpense) //private method call to get responseDTO from model.Expense
 	return responseDTO, nil
 }
 
-func (expenseService *expenseService) FindAllExpenseOfUser(userId int) []response.Expense {
+func (expenseService *expenseService) FindAllExpenseOfUser(
+	userId int,
+	from time.Time,
+	to time.Time,
+	categories []string,
+	pageable Pageable) []response.Expense {
+	logger.Debug("Inside get user expense service")
 
-	logger.Info("Get user expenses")
+	var expenses *[]model.Expense
 
-	expenses := expenseService.expenseRepository.FindByUserId(userId)
+	to = to.Add(time.Hour * 24) //Add 24 hours to get expense inclusive for to date
+
+	if len(categories) == 0 {
+		logger.Info("Length of categories =", len(categories))
+		expenses = expenseService.expenseRepository.FindByUserIdAndSpendDateBetween(userId, from, to,pageable)
+	} else {
+		logger.Info("Length of categories =", len(categories))
+		expenses = expenseService.expenseRepository.
+			FindByUserIdAndCategoriesAndSpendDateBetween(userId, categories, from, to,pageable)
+	}
 
 	userExpenses := make([]response.Expense, len(*expenses))
 
@@ -56,11 +77,10 @@ func (expenseService *expenseService) FindAllExpenseOfUser(userId int) []respons
 	return userExpenses
 }
 
-
-func makeNewExpenseModel(expense *request.Expense,userId int) *model.Expense {
+func makeNewExpenseModel(expense *request.Expense, userId int) *model.Expense {
 
 	newExpense := &model.Expense{}
-	newExpense.UserId=userId
+	newExpense.UserId = userId
 	newExpense.Description = expense.Description
 	newExpense.Amount = expense.Amount
 	newExpense.SpendFrom = expense.SpendFrom
