@@ -57,7 +57,7 @@ func (repository *expenseRepository) FindByUserIdAndSpendDateBetween(
 
 	var expenses []model.Expense
 
-	transaction := util.DB.
+	transaction := repository.database.
 		Limit(pageable.Limit).
 		Offset(pageable.OffSet).
 		Find(&expenses, "userId=? AND spend_date between ? AND ?", userId, from, to)
@@ -80,7 +80,7 @@ func (repository *expenseRepository) FindByUserIdAndCategoriesAndSpendDateBetwee
 
 	var expenses []model.Expense
 
-	transaction := util.DB.
+	transaction := repository.database.
 		Limit(pageable.Limit).
 		Offset(pageable.OffSet).
 		Find(&expenses, "userId=? AND category in ? AND spend_date between ? AND ?", userId, categories,from, to)

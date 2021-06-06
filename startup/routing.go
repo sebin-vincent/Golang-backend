@@ -7,8 +7,9 @@ import (
 )
 
 type Router struct {
-	expenseRouter *router.ExpenseRouter
-	userRouter *router.UserRouter
+	expenseRouter router.ExpenseRouter
+	userRouter router.UserRouter
+	categoryRouter router.CategoryRouter
 }
 
 func (routing *Router) InitializeRouting(server *gin.Engine) {
@@ -16,6 +17,7 @@ func (routing *Router) InitializeRouting(server *gin.Engine) {
 
 	routing.expenseRouter.InitializeExpenseRouting(server)
 	routing.userRouter.InitializeUserRouter(server)
+	routing.categoryRouter.InitializeCategoryRouting(server)
 
 	logger.Info("Routing initialized")
 }
@@ -25,5 +27,6 @@ func NewRouter() *Router {
 	return &Router{
 		expenseRouter: router.NewExpenseRouter(),
 		userRouter: router.NewUserRouter(),
+		categoryRouter: router.NewCategoryRouter(),
 	}
 }

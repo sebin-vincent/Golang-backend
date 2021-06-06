@@ -22,11 +22,11 @@ func (router *UserRouter) InitializeUserRouter(server *gin.Engine) {
 
 
 
-func NewUserRouter() *UserRouter{
+func NewUserRouter() UserRouter{
 
 	repo:=repository.NewUserRepository()
 	userService:=service.NewUserService(repo)
 	userController:=controller.NewUserController(userService)
 
-	return &UserRouter{userController: userController}
+	return UserRouter{userController: userController}
 }

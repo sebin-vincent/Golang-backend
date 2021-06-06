@@ -21,12 +21,12 @@ func (router *ExpenseRouter) InitializeExpenseRouting(server *gin.Engine) {
 	server.GET("/expenses",Authenticate(""), expenseValidator.ValidateGetExpensesOfUser, router.controller.GetExpenses)
 }
 
-func NewExpenseRouter() *ExpenseRouter {
+func NewExpenseRouter() ExpenseRouter {
 	expenseRepository := repository.NewExpenseRepository()
 	expenseService := service.NewExpenseService(expenseRepository)
 	expenseController := controller.NewExpenseController(expenseService)
 
-	return &ExpenseRouter{
+	return ExpenseRouter{
 		controller: expenseController,
 	}
 }
