@@ -16,12 +16,13 @@ var tokenGenerator *jwt.Token
 
 
 func init(){
-	privateKeyFile, err := ioutil.ReadFile("private.key")
+	path:="/home/sebin/myProjects/golang/open-wallet/Golang-backend/"
+	privateKeyFile, err := ioutil.ReadFile(path+"private.key")
 	if err!=nil{
 		logger.Error("Error occurred while reading privateKey file: ",err)
 	}
 	
-	publicKeyFile, err := ioutil.ReadFile("public.key")
+	publicKeyFile, err := ioutil.ReadFile(path+"public.key")
 	if err!=nil{
 		logger.Error("Error occurred while reading publicKey file: ",err)
 	}

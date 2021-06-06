@@ -9,7 +9,7 @@ import (
 	"time"
 )
 
-
+//go:generate mockgen --destination=../mocks/expense_repository.go --package=mocks github.com/wallet-tracky/Golang-backend/repository ExpenseRepository
 type ExpenseRepository interface {
 	Save(expense *model.Expense) error
 	FindByUserId(userId int) *[]model.Expense
